@@ -56,11 +56,6 @@
 
 ## Task Mandate
 
-### Project Overview
-The following task mandate outlines the responsibilities for each team member involved in the OurBank project. The project is a simplified backend for a fintech neo bank with key features such as checking and savings accounts, crypto wallets, blockchain integration, and machine learning for portfolio recommendations.
-
-### Work Assignments
-
 #### Person 1: SQL Database and Data Model Design
 Responsible for setting up the SQL database and creating data models to ensure proper structure and relationships.
 
@@ -107,10 +102,12 @@ Develops machine learning functionality and integrates blockchain/smart contract
   - `models/wallet.py`: Ensure the crypto wallet model supports blockchain interactions, including smart contracts.
 
 ### Collective Effort
-This project requires a collaborative effort, so don't hesitate to ask for clarification when needed. Use classwork codes or online resources (Slack, YouTube, ChatGPT) to generate baseline code for your tasks.
+This project requires a collaborative effort, so don't hesitate to ask for clarification when needed.
+Use classwork codes or online resources (Slack, YouTube, ChatGPT) to generate baseline code for your tasks.
 
 ### Frontend Development
-For this project, a simple HTML frontend will be used to connect with the backend for our group presentation. A prebuilt theme will be integrated with the backend functionalities.
+For this project, a simple HTML frontend will be used to connect with the backend for our group presentation.
+A prebuilt theme will be integrated with the backend functionalities.
 
 ### Final Notes
-Happy coding! Let's work together to build a great project.
+Happy coding! Let's work together and build a great project.
