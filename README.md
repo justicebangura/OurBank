@@ -103,7 +103,7 @@ Develops machine learning functionality and integrates blockchain/smart contract
 
 ### Collective Effort
 This project requires a collaborative effort, so don't hesitate to ask for clarification when needed.
-Use classwork codes or online resources (Slack, YouTube, ChatGPT) to generate baseline code for your tasks.
+Use classwork codes or online resources (Slack, YouTube, ChatGPT) to generate baseline code.
 
 ### Frontend Development
 For this project, a simple HTML frontend will be used to connect with the backend for our group presentation.
