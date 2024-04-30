@@ -57,7 +57,7 @@
 ## Task Mandate
 
 #### Person 1: SQL Database and Data Model Design
-Responsible for setting up the SQL database and creating data models to ensure proper structure and relationships.
+Responsible for setting up the SQL database and creating data models to ensure proper structure.
 
 - **Tasks:**
   - `config/database.py`: Configure the database and set up the initial structure.
