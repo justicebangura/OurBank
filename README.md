@@ -1,4 +1,4 @@
-# OurBank (Fintech Neo Bank)
+# Fintech Digital Bank
 
 ![Logo for OurBank](Images/OurBank.png)
 
