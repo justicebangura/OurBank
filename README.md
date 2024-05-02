@@ -37,13 +37,13 @@ OurBank/
 ## Task Mandate
 
 #### Person 1: SQL Database and Data Model Design
-Responsible for setting up the SQL database and creating data models to ensure proper structure.
+Setting up the SQL database and creating data models to ensure proper structure.
 
 #### Person 2: Account Creation and Authentication
 Focuses on user registration, login, and JWT-based authentication, ensuring secure user management
 
 #### Person 3: Machine Learning/Blockchain
-Develops and integrates blockchain and machine Learning support.
+Develops and integrates machine Learning primarily.
 
 #### Person 4: Blockchain/Smart Contract Support
 Develops and integrates blockchain/smart contract support.
