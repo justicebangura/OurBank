@@ -21,6 +21,7 @@ contract CryptoWallet {
 
     function withdraw(uint256 amount) external onlyOwner {
         require(address(this).balance >= amount, "Insufficient balance in the contract");
+        balances[accountOwner] -= amount; 
         accountOwner.transfer(amount);
     }
 
