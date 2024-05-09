@@ -96,7 +96,4 @@ def main():
         else:
             st.warning("Please log in first")
 
-# Run the Streamlit app
-if __name__ == "__main__":
-    main()
 
