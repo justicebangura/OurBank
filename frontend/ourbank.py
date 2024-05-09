@@ -43,5 +43,3 @@ elif navigation == "About":
     import pages.about as about
     about.show
 
-
-
