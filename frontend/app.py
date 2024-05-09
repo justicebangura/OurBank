@@ -4,7 +4,7 @@ import pages.account as account
 import pages.transactions as transactions
 import pages.about as about
 import base64
-
+from PIL import Image
 
 # Function to load and display the logo in the sidebar
 def display_logo_in_sidebar(img_path):

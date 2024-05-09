@@ -14,4 +14,3 @@ def get_transactions():
         {"date": "2023-01-02", "description": "Salary", "amount": 2000.0, "type": "Deposit"},
         {"date": "2023-01-03", "description": "Restaurant", "amount": -100.0, "type": "Withdrawal"},
     ])
-
