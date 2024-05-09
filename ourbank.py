@@ -1,8 +1,8 @@
 import streamlit as st
-import pages.home as home
-import pages.account as account
-import pages.transactions as transactions
-import pages.about as about
+import frontend.pages.home as home
+import frontend.pages.account as account
+import frontend.pages.transactions as transactions
+import frontend.pages.about as about
 import base64
 
 
@@ -31,15 +31,15 @@ st.sidebar.title("Navigation")
 navigation = st.sidebar.radio("Select a Page", ("Home", "Account", "Transactions","About"))
     
 if navigation == "Home":
-    import pages.home as home
+    import frontend.pages.home as home
     home.show()
 elif navigation == "Account":
-    import pages.account as account
+    import frontend.pages.account as account
     account.show()
 elif navigation == "Transactions":
-    import pages.transactions as transactions
+    import frontend.pages.transactions as transactions
     transactions.show
 elif navigation == "About":
-    import pages.about as about
+    import frontend.pages.about as about
     about.show
 
