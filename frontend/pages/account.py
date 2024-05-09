@@ -81,7 +81,7 @@ def account_operations():
             st.error(str(e))
 
 # Streamlit main function to handle menu and operations
-def main():
+def show():
     st.sidebar.title("Bank App")
     options = ["Login", "Open Account", "Account Operations"]
     choice = st.sidebar.selectbox("Menu", options)
