@@ -13,3 +13,18 @@ def show():
     img = Image.open("../Images/Justice.png")
     small_img = img.resize((200, 200)) 
     st.image(small_img, caption="Justice Bangura", use_column_width=False)
+
+    # Displaying images of the Our Bank Team 
+    img = Image.open("../Images/Justice.png")
+    small_img = img.resize((200, 200)) 
+    st.image(small_img, caption="Justice Bangura", use_column_width=False)
+
+    # Displaying images of the Our Bank Team 
+    img = Image.open("../Images/Justice.png")
+    small_img = img.resize((200, 200)) 
+    st.image(small_img, caption="Justice Bangura", use_column_width=False)
+
+    # Displaying images of the Our Bank Team 
+    img = Image.open("../Images/Justice.png")
+    small_img = img.resize((200, 200)) 
+    st.image(small_img, caption="Justice Bangura", use_column_width=False)
