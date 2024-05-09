@@ -1,15 +1,14 @@
 import streamlit as st
-import utils
 
 def show():
     st.title("Transactions")
     st.write("View and manage your transactions.")
 
     # Fetching transaction data from the backend
-    transactions = utils.get_transactions()
+   # transactions = utils.get_transactions()
 
     # Display transactions in a table with sorting
-    st.dataframe(transactions)
+    #st.dataframe(transactions)
 
     st.subheader("Add a New Transaction")
     with st.form("transaction_form"):
