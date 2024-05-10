@@ -43,7 +43,3 @@ def show():
     )
     if st.button("Open an Account"):
         st.write("Thank you for your interest! Please visit our sign-up page to get started.")  # Call-to-action feedback
-
-# If the script is executed directly, run the 'show' function
-if __name__ == "__main__":
-    show()
