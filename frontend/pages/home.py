@@ -4,7 +4,9 @@ from PIL import Image
 # Function to display the home page
 def show():
     # Title and Introduction
-    st.title("Welcome to OurBank")
+    #st.title("Welcome to OurBank")
+    st.markdown('<h1>Welcome to <span style="color:#ee2d36">OurBank</span></h1>', unsafe_allow_html=True)
+
     st.write(
         """
         At OurBank, we are committed to providing innovative crypto banking solutions. 
