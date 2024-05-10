@@ -26,7 +26,7 @@ def display_logo_in_sidebar(img_path):
 # Display the logo in the sidebar
 display_logo_in_sidebar("Images/transparent1.png")  # Path to the logo image
 
-    # Navigation and content for authenticated users
+# Navigation and content for authenticated users
 st.sidebar.title("Navigation")
 navigation = st.sidebar.radio("Select a Page", ("Home", "Account", "Features","About"))
     
