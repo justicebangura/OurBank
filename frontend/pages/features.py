@@ -95,6 +95,3 @@ def show():
     )
     st.button("Open an Account", key="open_account")  # Call-to-action button
 
-# If the file is executed directly, run the 'show' function
-if __name__ == "__main__":
-    show()
