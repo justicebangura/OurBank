@@ -1,7 +1,8 @@
 import streamlit as st
 import os
+import time
 from backend.banking_account import (
-    open_new_account,
+    open_new_account as new_acct,
     login_user,
     check_account_balance,
     deposit_funds,
@@ -13,16 +14,20 @@ from backend.banking_account import (
 if 'logged_in_user' not in st.session_state:
     st.session_state['logged_in_user'] = None
 
-# Function to log in and set session
+
 def login():
-    st.title("Login")
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    st.sidebar.title("Login")
+    username = st.sidebar.text_input("Username", key = 'username')
+    password = st.sidebar.text_input("Password", type="password", key = 'password')
     
-    if st.button("Login"):
+
+    if st.sidebar.button("Login"):
         if login_user(username, password):
             st.session_state['logged_in_user'] = username
             st.success("Logged in successfully!")
+            time.sleep(1)
+            if st.session_state['selected_option'] == 'Open Account':
+                st.session_state.selected_option = "Account Operations"
         else:
             st.error("Invalid username or password")
 
@@ -34,7 +39,7 @@ def open_new_account():
     
     if st.button("Create Account"):
         try:
-            open_new_account(username, password)
+            new_acct(username, password)
             st.success("Account created successfully!")
         except ValueError as e:
             st.warning(str(e))
@@ -46,19 +51,23 @@ def account_operations():
     
     # Get account details
     account_details = check_account_balance(username)
-    st.write(f"Current balance: {account_details['balance']:.2f}")
+    account_balance_details = [f'{i[1]:.2f} {i[0]}' for i in account_details['balance'].items()]
+    st.write(f"Current balance: ")
+    for i in account_balance_details:
+        st.write(i)
+    
 
     # Transaction history
     st.subheader("Transaction History")
     for transaction in account_details['transactions']:
-        st.write(f"{transaction['type'].capitalize()} of {transaction['amount']} at {transaction['timestamp']}")
+        st.write(f"{transaction['type'].capitalize()} of {transaction['amount']:.2f} at {transaction['timestamp']}")
 
     # Deposit into account
     st.subheader("Deposit")
     amount = st.number_input("Enter amount to deposit", min_value=0.0)
     if st.button("Deposit"):
         new_balance = deposit_funds(username, amount)
-        st.write(f"Deposit successful! New balance: {new_balance:.2f}")
+        st.write(f"Deposit successful! New balance: $ {new_balance['USD']:.2f} USD")
 
     # Withdraw from account
     st.subheader("Withdraw")
@@ -66,7 +75,7 @@ def account_operations():
     if st.button("Withdraw"):
         try:
             new_balance = withdraw_funds(username, amount)
-            st.write(f"Withdrawal successful! New balance: {new_balance:.2f}")
+            st.write(f"Withdrawal successful! $ New balance: {new_balance['USD']:.2f} USD")
         except ValueError as e:
             st.error(str(e))
 
@@ -83,19 +92,36 @@ def account_operations():
 
 # Streamlit main function to handle menu and operations
 def show():
+    
+    
     st.sidebar.title("Bank App")
-    options = ["Login", "Open Account", "Account Operations"]
-    choice = st.sidebar.selectbox("Menu", options)
+    options = ["Open Account", "Account Operations"]
 
-    if choice == "Login":
+    if st.session_state['logged_in_user']:
+        logout = st.sidebar.button('Log out')
+        if logout:
+            st.write('Logged out successfully')
+            st.session_state['logged_in_user'] = None
+    else:
         login()
-    elif choice == "Open Account":
+
+    choice = st.sidebar.selectbox("Menu", options, key = 'selected_option')
+
+    if choice == "Open Account":
         open_new_account()
     elif choice == "Account Operations":
         if st.session_state['logged_in_user']:
-            account_operations()
+            st.sidebar.title("Select account")
+            account_options = ['Everyday account', 'Crypto account']
+            choose_accounts = st.sidebar.selectbox("Select account", account_options)
+            if choose_accounts == 'Everyday account':
+                account_operations()
+            elif choose_accounts == 'Crypto account':
+                crypto_wallet()
         else:
             st.warning("Please log in first")
+    
+
 
 
 import streamlit as st
@@ -112,7 +138,7 @@ from solidity.files.crypto_wallet import (
 )
 
 # Streamlit function to display the Account page
-def show():
+def crypto_wallet():
     # Load environment variables and connect to Ethereum networks
     load_env()
     w3_ganache = connect_ganache()
@@ -120,12 +146,12 @@ def show():
 
     # Load contracts
     ganache_contract = load_contract(
-        w3_ganache, "./contracts/compiled/ganache_abi.json", os.getenv("SMART_CONTRACT_2_ADDRESS")
+        w3_ganache, "./solidity/files/contracts/compiled/ganache_abi.json", os.getenv("SMART_CONTRACT_2_ADDRESS")
     )
     sepolia_contract = load_contract(
-        w3_sepolia, "./contracts/compiled/ethConvert_abi.json", os.getenv("SMART_CONTRACT_ADDRESS")
+        w3_sepolia, "./solidity/files/contracts/compiled/ethConvert_abi.json", os.getenv("SMART_CONTRACT_ADDRESS")
     )
-
+    username = st.session_state['logged_in_user']
     # Get user account details
     my_account = w3_ganache.eth.accounts[0]  # First account in Ganache
     bank_account = w3_ganache.eth.accounts[9]  # Sample bank account
@@ -143,6 +169,8 @@ def show():
     if st.button("Convert"):
         converted_value = convert_eth_to_other_currency(eth_amount, conversion_rate, currency)
         st.write(f"{eth_amount:.2f} ETH is {converted_value:.2f} {currency}")
+        deposit_funds(username, converted_value, currency = currency)
+        transfer_eth(w3_ganache, my_account, bank_account, eth_amount)
 
     # Transfer Ethereum to another account
     st.header("Transfer Ethereum")
@@ -159,9 +187,22 @@ def show():
     # Stock information and interaction
     st.header("Stock Information")
     stock_symbol = st.text_input("Enter stock symbol")
+    stock_symbol = stock_symbol.upper()
+    num_of_stocks = st.number_input("How many stocks do you want to buy", min_value = 1, step = 1)
     if st.button("Get Stock Price"):
-        stock_price = stock_info(stock_symbol)
-        st.write(f"Current price for {stock_symbol}: ${stock_price:.2f}")
+        stock_price, price_in_eth = stock_info(conversion_rate, stock_symbol)
+        st.write(f"Current price for 1 share of {stock_symbol}: ${stock_price:.2f} USD or {price_in_eth:.4f} ETH")
+        if num_of_stocks > 1:
+            st.write(f"Price for {num_of_stocks} shares of {stock_symbol}: $ {stock_price * num_of_stocks:.2f} USD or {price_in_eth * num_of_stocks:.4f} ETH")
+    if st.button("Purchase using ETH"):
+        stock_price, price_in_eth = stock_info(conversion_rate, stock_symbol)
+        transfer_eth(w3_ganache, my_account, bank_account, price_in_eth*num_of_stocks)
+        st.write("Purchase complete")
+    if st.button("Purchase with USD"):
+        stock_price, price_in_eth = stock_info(conversion_rate, stock_symbol)
+        remaining_balance = withdraw_funds(username, stock_price*num_of_stocks)
+        st.write(f"Purchase complete. Remaining balance is $ {remaining_balance['USD']} USD")
+
 
     st.write(
         """

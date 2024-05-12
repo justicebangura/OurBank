@@ -62,12 +62,13 @@ def convert_eth_to_other_currency(eth_amount, conversion_rate, currency):
     return converted_value
 
 # Retrieve stock information with additional data
-def stock_info(stock_symbol):
+def stock_info(conversion_rate, stock_symbol):
     stock_symbol = stock_symbol.upper()
     data = yf.Ticker(stock_symbol)
     price_data = data.history(period="1d", interval="1m")["Close"].iloc[-1]
+    price_in_eth = price_data / conversion_rate
     logging.info(f"Current price for {stock_symbol}: ${price_data:.2f}")
-    return price_data
+    return price_data, price_in_eth
 
 # Transfer Ethereum with enhanced error handling
 def transfer_eth(w3, from_account, to_account, amount):

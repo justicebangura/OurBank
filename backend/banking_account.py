@@ -11,7 +11,7 @@ def open_new_account(username, raw_password):
     hashed_password = bcrypt.hashpw(raw_password.encode("utf-8"), bcrypt.gensalt())
     if username in users:
         raise ValueError("Username already exists!")
-    users[username] = {"password": hashed_password, "balance": 0}
+    users[username] = {"password": hashed_password, "balance": {}}
     return users[username]
 
 # Function to validate login credentials
@@ -28,22 +28,26 @@ def check_account_balance(username):
     raise ValueError("User not found")
 
 # Function to deposit money into an account
-def deposit_funds(username, amount):
+def deposit_funds(username, amount, currency = 'USD'):
     if username not in users:
         raise ValueError("User not found")
-    users[username]["balance"] += amount
-    transaction = {"type": "deposit", "username": username, "amount": amount, "timestamp": datetime.datetime.now()}
+    #users[username]["balance"] += amount
+    if currency in users[username]['balance']:
+        users[username]["balance"][currency] += amount
+    else:
+        users[username]["balance"][currency] = amount
+    transaction = {"type": "deposit", "username": username, "amount": amount, "currency": currency, "timestamp": datetime.datetime.now().replace(microsecond = 0)}
     transactions.append(transaction)
     return users[username]["balance"]
 
 # Function to withdraw money from an account
-def withdraw_funds(username, amount):
+def withdraw_funds(username, amount, currency = 'USD'):
     if username not in users:
         raise ValueError("User not found")
-    if users[username]["balance"] < amount:
+    if users[username]["balance"][currency] < amount:
         raise ValueError("Insufficient balance")
-    users[username]["balance"] -= amount
-    transaction = {"type": "withdrawal", "username": username, "amount": amount, "timestamp": datetime.datetime.now()}
+    users[username]["balance"][currency] -= amount
+    transaction = {"type": "withdrawal", "username": username, "amount": amount, "currency": currency, "timestamp": datetime.datetime.now().replace(microsecond = 0)}
     transactions.append(transaction)
     return users[username]["balance"]
 
@@ -60,7 +64,7 @@ def transfer_funds(sender, receiver, amount):
         "sender": sender,
         "receiver": receiver,
         "amount": amount,
-        "timestamp": datetime.datetime.now(),
+        "timestamp": datetime.datetime.now().replace(microsecond = 0),
     }
     transactions.append(transaction)
     return users[sender]["balance"], users[receiver]["balance"]
