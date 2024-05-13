@@ -1,15 +1,11 @@
 # features.py
 import streamlit as st
-from PIL import Image
-
-# Load necessary images or assets
-crypto_bank_image = Image.open("./Images/OurBank.png")
 
 # Define the 'show' function for the features page
 def show():
-    # Title and Introduction with Images
-    st.title("Welcome to OurBank")
-    st.image(crypto_bank_image, caption="Your Trusted Crypto Banking Partner",  width=333)
+    # Title and Introduction with Video
+    st.video("./Images/feature.mp4", format='video/mp4', start_time=0)
+    st.title("Manage your Digital Assets")
 
     st.write(
         """
@@ -76,7 +72,7 @@ def show():
     # Comprehensive Account Management
     col1, col2 = st.columns([1, 2])
     with col1:
-        st.image("./Images/account.jpg", width=64)  # Account management icon
+        st.image("./Images/account.png", width=64)  # Account management icon
     with col2:
         st.subheader("Comprehensive Account Management")
         st.write(
@@ -84,14 +80,3 @@ def show():
             Manage your account with complete control. Track balances and view transaction history.
             """
         )
-
-    # Call-to-Action with Button
-    st.header("Get Started")
-    st.write(
-        """
-        Join us today and experience the convenience and security. 
-        Whether you're a crypto enthusiast or just starting out, we have the tools you need to succeed.
-        """
-    )
-    st.button("Open an Account", key="open_account")  # Call-to-action button
-

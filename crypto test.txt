@@ -1,0 +1,75 @@
+import streamlit as st
+from solidity.files.crypto_wallet import (
+    load_env,
+    connect_ganache,
+    connect_sepolia,
+    load_contract,
+    eth_exchange_info,
+    convert_eth_to_other_currency,
+    stock_info,
+    transfer_eth,
+    get_account_balance,
+)
+
+# Streamlit function to display the Account page
+def show():
+    # Load environment variables and connect to Ethereum networks
+    load_env()
+    w3_ganache = connect_ganache()
+    w3_sepolia = connect_sepolia()
+
+    # Load contracts
+    ganache_contract = load_contract(
+        w3_ganache, "../contracts/compiled/ganache_abi.json", os.getenv("SMART_CONTRACT_2_ADDRESS")
+    )
+    sepolia_contract = load_contract(
+        w3_sepolia, "../contracts/compiled/ethConvert_abi.json", os.getenv("SMART_CONTRACT_ADDRESS")
+    )
+
+    # Get user account details
+    my_account = w3_ganache.eth.accounts[0]  # First account in Ganache
+    bank_account = w3_ganache.eth.accounts[9]  # Sample bank account
+    conversion_rate = eth_exchange_info(sepolia_contract)  # Get Ethereum conversion rate
+
+    # Display account information
+    st.title("Account Information")
+    st.write(f"My Ethereum address: {my_account}")
+    st.write(f"Account balance: {get_account_balance(w3_ganache, my_account):.2f} ETH")
+
+    # Converting Ethereum to different currencies
+    st.header("Convert Ethereum")
+    eth_amount = st.number_input("Enter ETH amount to convert", min_value=0.01)
+    currency = st.selectbox("Convert to", ["USD", "GBP", "EUR", "JPY", "CAD"])
+    if st.button("Convert"):
+        converted_value = convert_eth_to_other_currency(eth_amount, conversion_rate, currency)
+        st.write(f"{eth_amount:.2f} ETH is {converted_value:.2f} {currency}")
+
+    # Transfer Ethereum to another account
+    st.header("Transfer Ethereum")
+    to_account = st.text_input("Recipient's Ethereum address")
+    transfer_amount = st.number_input("ETH amount to transfer", min_value=0.01)
+    if st.button("Transfer"):
+        try:
+            receipt = transfer_eth(w3_ganache, my_account, to_account, transfer_amount)
+            st.success("Transfer successful!")
+            st.write(f"Transaction hash: {receipt['transactionHash'].hex()}")
+        except Exception as e:
+            st.error(f"Transfer failed: {e}")
+
+    # Stock information and interaction
+    st.header("Stock Information")
+    stock_symbol = st.text_input("Enter stock symbol")
+    if st.button("Get Stock Price"):
+        stock_price = stock_info(stock_symbol)
+        st.write(f"Current price for {stock_symbol}: ${stock_price:.2f}")
+
+    st.write(
+        """
+        Use the menu to navigate between different sections of the crypto bank. 
+        You can manage your account, convert Ethereum, transfer funds, and interact with stocks.
+        """
+    )
+
+# If this file is executed directly, run the 'show' function
+if __name__ == "__main__":
+    show()

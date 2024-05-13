@@ -13,11 +13,11 @@ def display_logo_in_sidebar(img_path):
     
     # Custom HTML for embedding the logo in the sidebar
     logo_html = f"""
-    <div style="text-align: center; padding: 10px;">
+    <div style="text-align: center; padding: 20px;">
         <img 
             src="data:image/png;base64,{img_base64}" 
             alt="Logo" 
-            style="width: 200px; height: 200px; border-radius: 50%;"
+            style="width: 250px; height: 250px; border-radius: 50%;"
         />
     </div>
     """

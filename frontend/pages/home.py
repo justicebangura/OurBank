@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image
+from backend.banking_account import open_new_account
 
 # Function to display the home page
 def show():
@@ -13,25 +13,7 @@ def show():
     )
 
     # Embed YouTube Video
-    #st.header("Watch Our Introductory Video")
-    #st.video("https://youtu.be/_k9mhRBI2cY?si=7W2DUrUU_A6ZPWlx")  # Embed video with Streamlit
-
-    # Displaying the main image
-    crypto_image = Image.open("./Images/babydov.jpg")  # Use a relevant image
-    st.image(crypto_image, caption="Your Trusted Crypto Banking Partner", use_column_width=True)
-
-    # Overview of Services
-    st.header("Our Services")
-    st.write(
-        """
-        We provide a range of services to meet your crypto banking needs, including:
-        
-        - **Secure Storage**: We ensure your digital assets are protected with top-notch encryption and multi-factor authentication.
-        - **Easy Transactions**: Our platform makes sending funds and managing transactions effortless.
-        - **Multi-Currency Support**: Handle multiple cryptocurrencies in one convenient place.
-        - **Real-Time Conversion**: Convert between digital assets and fiat currencies with ease.
-        """
-    )
+    st.video("./Images/homevid.mp4", format='video/mp4', start_time=0)
 
     # Call-to-Action with Button
     st.header("Get Started with OurBank")
@@ -41,5 +23,21 @@ def show():
         Whether you're a crypto enthusiast or just starting, we have the tools to help you succeed.
         """
     )
-    if st.button("Open an Account"):
-        st.write("Thank you for your interest! Please visit our sign-up page to get started.")  # Call-to-action feedback
+
+    # Form for user input
+    with st.form("create_account"):
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        submit_button = st.form_submit_button(label="Create Account")
+
+    # If the form is submitted, call the function to open a new account with provided username and password
+    if submit_button:
+        try:
+            open_new_account(username, password)
+            st.success("Account created successfully! You can now log in.")
+        except ValueError as e:
+            st.warning(str(e)) 
+
+# Render the home page
+show()
+

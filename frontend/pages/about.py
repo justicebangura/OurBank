@@ -43,7 +43,7 @@ def show():
         small_img_justice = img_justice.resize((150, 150))  # Smaller image for the team
         st.image(small_img_justice, caption="Justice Bangura", use_column_width=False)
 
-    with col2:
+        # Information about Justice Bangura
         st.write(
             """
             **Justice Bangura** is a lead Blockchain engineer and fintech expert. 
@@ -52,13 +52,46 @@ def show():
             """
         )
 
-    # Call-to-Action to Engage with the Bank
-    st.header("Get in Touch")
-    st.write(
-        """
-        We're always here to help. Whether you have questions about our services or need assistance, 
-        feel free to reach out to us. Join our community to stay updated with the latest developments 
-        in the crypto banking world.
-        """
-    )
-    st.button("Contact Us", key="contact_us")  # Call-to-action button for user interaction
+        # Displaying images of the OurBank Team
+        img_hyunbin = Image.open("./Images/Bin.JPG")
+        small_img_hyunbin = img_hyunbin.resize((150, 150))  # Smaller image for the team
+        st.image(small_img_hyunbin, caption="Hyun Bin Shin", use_column_width=False)
+
+        # Information about Hyun Bin Shin
+        st.write(
+            """
+            **Hyun Bin Shin** is a smart contract developer responsible for ensuring 
+            the functionality and security of OurBank's smart contracts. He leverages 
+            blockchain technology to create robust and efficient financial solutions.
+            """
+        )
+
+    with col2:
+        # Displaying images of the OurBank Team
+        img_katie = Image.open("./Images/Katie.JPG")
+        small_img_katie = img_katie.resize((150, 150))  # Smaller image for the team
+        st.image(small_img_katie, caption="Katie Nieuwhof", use_column_width=False)
+
+        # Information about Katie Nieuwhof
+        st.write(
+            """
+            **Katie Nieuwhof** is a lead developer of the Crypto Wallet. 
+            She specializes in the development of secure and user-friendly 
+            solutions for managing digital assets.
+            """
+        )
+
+        # Call-to-Action with Button
+        st.header("Get Started with OurBank")
+        st.write(
+            """
+            Ready to join? Get started with OurBank today. 
+            Whether you're a crypto enthusiast or just starting, we have the tools to help you succeed.
+            """
+        )
+        if st.button("Check out our GitHub Repository", key="github_repo"):
+            st.write("Check out our GitHub repository for the project:")
+            st.markdown("[OurBank GitHub Repository](https://github.com/justicebangura/OurBank.git)")  # Call-to-action feedback
+
+# Display the About page
+show()
