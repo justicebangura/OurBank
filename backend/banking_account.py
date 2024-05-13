@@ -20,7 +20,7 @@ client = pymongo.MongoClient(os.getenv("MONGO_CLIENT_URI"))
 # Specify the database and collections
 db = client["OurBank"]
 users = db["users"]
-#transactions = db["transactions"]
+transactions = db["transactions"]
 
 # Function to create a new user account with hashed password
 def open_new_account(username, raw_password):

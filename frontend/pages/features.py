@@ -77,6 +77,6 @@ def show():
         st.subheader("Comprehensive Account Management")
         st.write(
             """
-            Manage your account with complete control. Track balances and view transaction history.
+            Manage your account with complete control.
             """
         )

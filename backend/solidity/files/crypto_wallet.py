@@ -6,7 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from forex_python.converter import CurrencyRates
 import yfinance as yf
-
+from pymongo import MongoClient
 
 
 # Set up logging
@@ -22,6 +22,32 @@ def load_env():
     return success
 
 load_env()
+
+# Connect to MongoDB
+def connect_mongodb():
+    try:
+        client = MongoClient(os.getenv("MONGODB_URI"))
+        db = client["Crypto"]
+        logging.info("Connected to MongoDB successfully.")
+        return db
+    except Exception as e:
+        logging.error(f"Failed to connect to MongoDB: {e}")
+        raise
+
+db = connect_mongodb()
+
+def store_user_account_info(username, email, hashed_password, account_balance):
+    try:
+        db.user_accounts.insert_one({
+            "username": username,
+            "email": email,
+            "hashed_password": hashed_password,  # Ensure the password is properly hashed
+            "account_balance": account_balance
+        })
+        logging.info("User account information stored securely in the database.")
+    except Exception as e:
+        logging.error(f"Failed to store user account information: {e}")
+        raise
 
 # Connect to Ganache
 def connect_ganache():
@@ -42,23 +68,12 @@ def connect_sepolia():
     return w3
 
 # Load Ethereum contract
-def load_contract(w3, ABI_PATH, contract_address):
-    # Get the ABI path from the environment variable
-    abi_path = os.getenv(ABI_PATH)
-    if abi_path is None:
-        raise ValueError(f"ABI contract path environment variable '{abi_path}' not set")
-
-    # Ensure the contract address is in the correct format
-    contract_address = Web3.toChecksumAddress(contract_address)
-
-    # Load the contract ABI from the ABI path
+def load_contract(w3, abi_path, contract_address):
     with open(Path(abi_path)) as f:
         contract_abi = json.load(f)
-
-    # Create the contract instance
+    contract_address = Web3.to_checksum_address(contract_address)
     contract = w3.eth.contract(address=contract_address, abi=contract_abi)
     logging.info(f"Contract loaded at address {contract_address}")
-
     return contract
 
 # Retrieve Ethereum exchange information
@@ -102,7 +117,7 @@ def transfer_eth(w3, from_account, to_account, amount):
         raise
 
 # Additional utility function to get account balance
-def get_account_balance(w3, account_address):
+def get_crypto_balance(w3, account_address):
     balance = w3.eth.get_balance(account_address) / 1e18
     logging.info(f"Balance for account {account_address}: {balance:.2f} ETH")
     return balance

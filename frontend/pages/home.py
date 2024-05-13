@@ -24,20 +24,6 @@ def show():
         """
     )
 
-    # Form for user input
-    with st.form("create_account"):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        submit_button = st.form_submit_button(label="Create Account")
-
-    # If the form is submitted, call the function to open a new account with provided username and password
-    if submit_button:
-        try:
-            open_new_account(username, password)
-            st.success("Account created successfully! You can now log in.")
-        except ValueError as e:
-            st.warning(str(e)) 
-
 # Render the home page
 show()
 
