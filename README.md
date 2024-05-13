@@ -29,19 +29,19 @@ OurBank/
 ## Task Mandate
 
 ### Person 1: SQL Database and Data Model Design
-Responsible for setting up the SQL database and creating data models to ensure proper structure.
+- Responsible for setting up the SQL database and creating data models to ensure proper structure.
 
 ### Person 2: Account Creation and Authentication
-Focuses on user registration, login, and authentication, ensuring secure user management.
+- Focuses on user registration, login, and authentication, ensuring secure user management.
 
 ### Person 3: Crypto Wallet
-Develops the crypto wallet functionality.
+- Develops the crypto wallet functionality.
 
 ### Person 4: Blockchain/Smart Contract Support
-Develops and integrates blockchain/smart contract support.
+- Develops and integrates blockchain/smart contract support.
 
 ## Collective Effort
-This project requires collaborative effort, so don't hesitate to ask for clarification when needed.
+- This project requires collaborative effort, so don't hesitate to ask for clarification when needed.
 Utilize classwork codes or online resources (Slack, YouTube, ChatGPT) to generate baseline code.
 
 ## Frontend Development
