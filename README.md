@@ -28,8 +28,8 @@ OurBank/
 
 ## Task Mandate
 
-### Person 1: SQL Database and Data Model Design
-- setting up the SQL database and creating data models to ensure proper structure.
+### Person 1: Mongodb Database and Data Model Design
+- setting up the Mongodb database and creating data models to ensure proper structure.
 
 ### Person 2: Account Creation and Authentication
 - Focuses on user registration, login, and authentication, ensuring secure user management.
