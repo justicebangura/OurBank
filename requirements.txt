@@ -1,0 +1,8 @@
+streamlit
+bcrypt
+forex-python
+pillow
+pymongo
+streamlit
+web3
+yfinance
