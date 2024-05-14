@@ -4,22 +4,10 @@ import time
 from backend.banking_account import (
     open_new_account as new_acct,
     login_user,
-    get_account_balance,
+    check_account_balance,
     deposit_funds,
     withdraw_funds,
     transfer_funds,
-)
-
-from backend.solidity.files.crypto_wallet import (
-    load_env,
-    connect_ganache,
-    connect_sepolia,
-    load_contract,
-    eth_exchange_info,
-    convert_eth_to_other_currency,
-    stock_info,
-    transfer_eth,
-    get_crypto_balance,
 )
 
 # Dictionary to store user sessions
@@ -60,13 +48,26 @@ def open_new_account():
 def account_operations():
     username = st.session_state['logged_in_user']
     st.title(f"Welcome, {username}")
+    
+    # Get account details
+    account_details = check_account_balance(username)
+    account_balance_details = [f'{i[1]:.2f} {i[0]}' for i in account_details['balance'].items()]
+    st.write(f"Current balance: ")
+    for i in account_balance_details:
+        st.write(i)
+    
+
+    # Transaction history
+    st.subheader("Transaction History")
+    for transaction in account_details['transactions']:
+        st.write(f"{transaction['type'].capitalize()} of {transaction['amount']:.2f} {transaction['currency']} at {transaction['timestamp']}")
 
     # Deposit into account
     st.subheader("Deposit")
     amount = st.number_input("Enter amount to deposit", min_value=0.0)
     if st.button("Deposit"):
         new_balance = deposit_funds(username, amount)
-        st.write(f"Deposit successful! New balance: {new_balance:.2f}")
+        st.write(f"Deposit successful! New balance: $ {new_balance['USD']:.2f} USD")
 
     # Withdraw from account
     st.subheader("Withdraw")
@@ -74,7 +75,7 @@ def account_operations():
     if st.button("Withdraw"):
         try:
             new_balance = withdraw_funds(username, amount)
-            st.write(f"Withdrawal successful! New balance: {new_balance:.2f}")
+            st.write(f"Withdrawal successful! $ New balance: {new_balance['USD']:.2f} USD")
         except ValueError as e:
             st.error(str(e))
 
@@ -85,19 +86,58 @@ def account_operations():
     if st.button("Transfer"):
         try:
             sender_balance, receiver_balance = transfer_funds(username, receiver, amount)
-            st.write(f"Transfer successful! your new balance: {sender_balance:.2f}")
+            st.write(f"Transfer successful! Sender's new balance: {sender_balance:.2f}")
         except ValueError as e:
             st.error(str(e))
 
-    # Get account balance directly
-    account_balance = get_account_balance(username)
-    st.write(f"Current balance: {account_balance:.2f}")
+# Streamlit main function to handle menu and operations
+def show():
+    
+    st.sidebar.title("Bank App")
+    options = ["Open Account", "Account Operations"]
 
-    # Transaction history
-    #st.subheader("Transaction History")
-    #for transaction in account_balance['transactions']:
-        #st.write(f"{transaction['type'].capitalize()} of {transaction['amount']:.2f} at {transaction['timestamp']}")
-            
+    # Login and logout logic
+    if st.session_state['logged_in_user']:
+        logout = st.sidebar.button('Log out')
+        if logout:
+            st.write('Logged out successfully')
+            st.session_state['logged_in_user'] = None
+    else:
+        login()
+
+    choice = st.sidebar.selectbox("Menu", options, key = 'selected_option')
+
+    # Account features dropdown
+    if choice == "Open Account":
+        open_new_account()
+    elif choice == "Account Operations":
+        if st.session_state['logged_in_user']:
+            st.sidebar.title("Select account")
+            account_options = ['Everyday account', 'Crypto account']
+            choose_accounts = st.sidebar.selectbox("Select account", account_options)
+            if choose_accounts == 'Everyday account':
+                account_operations()
+            elif choose_accounts == 'Crypto account':
+                crypto_wallet()
+        else:
+            st.warning("Please log in first")
+    
+
+
+
+import streamlit as st
+from backend.solidity.files.crypto_wallet import (
+    load_env,
+    connect_ganache,
+    connect_sepolia,
+    load_contract,
+    eth_exchange_info,
+    convert_eth_to_other_currency,
+    stock_info,
+    transfer_eth,
+    get_account_balance
+)
+
 # Streamlit function to display the Account page
 def crypto_wallet():
     # Load environment variables and connect to Ethereum networks
@@ -107,10 +147,10 @@ def crypto_wallet():
 
     # Load contracts
     ganache_contract = load_contract(
-        w3_ganache, "../solidity/files/contracts/compiled/ganache_abi.json", os.getenv("SMART_CONTRACT_2_ADDRESS")
+        w3_ganache, "backend/solidity/files/contracts/compiled/ganache_abi.json", os.getenv("SMART_CONTRACT_2_ADDRESS")
     )
     sepolia_contract = load_contract(
-        w3_sepolia, "../solidity/files/contracts/compiled/ethConvert_abi.json", os.getenv("SMART_CONTRACT_ADDRESS")
+        w3_sepolia, "backend/solidity/files/contracts/compiled/ethConvert_abi.json", os.getenv("SMART_CONTRACT_ADDRESS")
     )
     username = st.session_state['logged_in_user']
     # Get user account details
@@ -121,7 +161,7 @@ def crypto_wallet():
     # Display account information
     st.title("Account Information")
     st.write(f"My Ethereum address: {my_account}")
-    st.write(f"Account balance: {get_crypto_balance(w3_ganache, my_account):.2f} ETH")
+    st.write(f"Account balance: {get_account_balance(w3_ganache, my_account):.2f} ETH")
 
     # Converting Ethereum to different currencies
     st.header("Convert Ethereum")
@@ -172,32 +212,6 @@ def crypto_wallet():
         """
     )
 
-# Streamlit main function to handle menu and operations
-def show():   
-    
-    st.sidebar.title("Bank App")
-    options = ["Open Account", "Account Operations"]
-
-    if st.session_state['logged_in_user']:
-        logout = st.sidebar.button('Log out')
-        if logout:
-            st.write('Logged out successfully')
-            st.session_state['logged_in_user'] = None
-    else:
-        login()
-
-    choice = st.sidebar.selectbox("Menu", options, key = 'selected_option')
-
-    if choice == "Open Account":
-        open_new_account()
-    elif choice == "Account Operations":
-        if st.session_state['logged_in_user']:
-            st.sidebar.title("Select account")
-            account_options = ['Everyday account', 'Crypto account']
-            choose_accounts = st.sidebar.selectbox("Select account", account_options)
-            if choose_accounts == 'Everyday account':
-                account_operations()
-            elif choose_accounts == 'Crypto account':
-                crypto_wallet()
-        else:
-            st.warning("Please log in first")
+# If this file is executed directly, run the 'show' function
+if __name__ == "__main__":
+    show()

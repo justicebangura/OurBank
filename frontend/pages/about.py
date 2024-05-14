@@ -38,7 +38,7 @@ def show():
     col1, col2 = st.columns(2)  # Creating two columns for a balanced layout
 
     with col1:
-        # Displaying images of the OurBank Team
+        # Displaying images of Justice Bangura
         img_justice = Image.open("./Images/Justice.png")
         small_img_justice = img_justice.resize((150, 150))  # Smaller image for the team
         st.image(small_img_justice, caption="Justice Bangura", use_column_width=False)
@@ -52,7 +52,7 @@ def show():
             """
         )
 
-        # Displaying images of the OurBank Team
+        # Displaying images of Hyun Bin Shin
         img_hyunbin = Image.open("./Images/Bin.JPG")
         small_img_hyunbin = img_hyunbin.resize((150, 150))  # Smaller image for the team
         st.image(small_img_hyunbin, caption="Hyun Bin Shin", use_column_width=False)
@@ -67,7 +67,7 @@ def show():
         )
 
     with col2:
-        # Displaying images of the OurBank Team
+        # Displaying images of Katie Nieuwhof
         img_katie = Image.open("./Images/Katie.JPG")
         small_img_katie = img_katie.resize((150, 150))  # Smaller image for the team
         st.image(small_img_katie, caption="Katie Nieuwhof", use_column_width=False)
@@ -78,6 +78,22 @@ def show():
             **Katie Nieuwhof** is a lead developer of the Crypto Wallet. 
             She specializes in the development of secure and user-friendly 
             solutions for managing digital assets.
+            """
+        )
+
+        # Displaying images of Sahib Gandhi
+        img_hyunbin = Image.open("./Images/Sahib.JPG")
+        small_img_hyunbin = img_hyunbin.resize((150, 150))  # Smaller image for the team
+        st.image(small_img_hyunbin, caption="Hyun Bin Shin", use_column_width=False)
+
+        # Information about Hyun Bin Shin
+        st.write(
+            """
+            **Sahib Gandhi** Is in charge of the back end logic of the applications and ensuring everything is 
+            running smoothly. His primary responsibility is to design and implement Streamlit functions 
+            that visualize data, enable user interaction, and deliver insights efficiently. Sahib leveraged
+            Streamlit's intuitive APls to develop engaging and user-friendly applications for data analysis, 
+            machine learning, visualization, and more.
             """
         )
 

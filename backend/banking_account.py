@@ -3,6 +3,7 @@ import pymongo
 import os
 from dotenv import load_dotenv
 import logging
+import datetime
 
 # Load environment variables
 def load_env():
@@ -25,12 +26,10 @@ transactions = db["transactions"]
 # Function to create a new user account with hashed password
 def open_new_account(username, raw_password):
     hashed_password = bcrypt.hashpw(raw_password.encode("utf-8"), bcrypt.gensalt())
-    existing_user = users.find_one({"username": username})
-    if existing_user:
+    if users.find_one({"username": username}):
         raise ValueError("Username already exists!")
-    users.insert_one({"username": username, "password": hashed_password, "balance": 0})
-    return {"username": username, "password": hashed_password, "balance": 0}
-
+    users.insert_one({"username": username, "password": hashed_password, "balance": {}})
+    return users.find_one({"username": username})
 
 # Function to validate login credentials
 def login_user(username, raw_password):
@@ -40,44 +39,55 @@ def login_user(username, raw_password):
         return bcrypt.checkpw(raw_password.encode("utf-8"), stored_password)
     return False
 
-# Function to deposit money into an account
-def deposit_funds(username, amount):
+def check_account_balance(username):
     user = users.find_one({"username": username})
-    if not user:
-        raise ValueError("User not found")
-    new_balance = user["balance"] + amount
-    users.update_one({"username": username}, {"$set": {"balance": new_balance}})
-    return new_balance
+    if user:
+        return {"balance": user["balance"], "transactions": list(transactions.find())}
+    raise ValueError("User not found")
+
+# Function to deposit money into an account
+def deposit_funds(username, amount, currency='USD'):
+    user = users.find_one({"username": username})
+    if user:
+        if currency in user['balance']:
+            users.update_one({"username": username}, {"$inc": {"balance." + currency: amount}})
+        else:
+            users.update_one({"username": username}, {"$set": {"balance." + currency: amount}})
+        transaction = {"type": "deposit", "username": username, "amount": amount, "currency": currency, "timestamp": datetime.datetime.now().replace(microsecond=0)}
+        transactions.insert_one(transaction)
+        return users.find_one({"username": username})["balance"]
+    raise ValueError("User not found")
 
 # Function to withdraw money from an account
-def withdraw_funds(username, amount):
+def withdraw_funds(username, amount, currency='USD'):
     user = users.find_one({"username": username})
-    if not user:
-        raise ValueError("User not found")
-    if user["balance"] < amount:
-        raise ValueError("Insufficient balance")
-    new_balance = user["balance"] - amount
-    users.update_one({"username": username}, {"$set": {"balance": new_balance}})
-    return new_balance
+    if user:
+        if user["balance"].get(currency, 0) < amount:
+            raise ValueError("Insufficient balance")
+        users.update_one({"username": username}, {"$inc": {"balance." + currency: -amount}})
+        transaction = {"type": "withdrawal", "username": username, "amount": amount, "currency": currency, "timestamp": datetime.datetime.now().replace(microsecond=0)}
+        transactions.insert_one(transaction)
+        return users.find_one({"username": username})["balance"]
+    raise ValueError("User not found")
 
 # Function to transfer money between accounts
 def transfer_funds(sender, receiver, amount):
-    sender_user = users.find_one({"username": sender})
-    receiver_user = users.find_one({"username": receiver})
-    if not sender_user or not receiver_user:
-        raise ValueError("One or both users not found")
-    if sender_user["balance"] < amount:
-        raise ValueError("Insufficient balance")
-    sender_new_balance = sender_user["balance"] - amount
-    receiver_new_balance = receiver_user["balance"] + amount
-    users.update_one({"username": sender}, {"$set": {"balance": sender_new_balance}})
-    users.update_one({"username": receiver}, {"$set": {"balance": receiver_new_balance}})
-    return sender_new_balance, receiver_new_balance
+    sender_data = users.find_one({"username": sender})
+    receiver_data = users.find_one({"username": receiver})
+    if sender_data and receiver_data:
+        if sender_data["balance"].get("USD", 0) < amount:
+            raise ValueError("Insufficient balance")
+        users.update_one({"username": sender}, {"$inc": {"balance.USD": -amount}})
+        users.update_one({"username": receiver}, {"$inc": {"balance.USD": amount}})
+        transaction = {
+            "type": "transfer",
+            "sender": sender,
+            "receiver": receiver,
+            "amount": amount,
+            "timestamp": datetime.datetime.now().replace(microsecond=0),
+        }
+        transactions.insert_one(transaction)
+        return users.find_one({"username": sender})["balance"], users.find_one({"username": receiver})["balance"]
+    raise ValueError("One or both users not found")
 
-def get_account_balance(username):
-    user = users.find_one({"username": username})
-    if user:
-        return user["balance"]
-    else:
-        raise ValueError("User not found")
-
+#add store transaction history  

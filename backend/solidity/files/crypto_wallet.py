@@ -84,19 +84,19 @@ def eth_exchange_info(contract):
 
 # Convert Ethereum to other currencies
 def convert_eth_to_other_currency(eth_amount, conversion_rate, currency):
-    c = CurrencyRates()
     usd_value = conversion_rate * eth_amount
-    converted_value = c.convert("USD", currency, usd_value)
+    converted_value = currency_converter(currency, usd_value)
     logging.info(f"Converted {eth_amount} ETH to {converted_value:.2f} {currency}")
     return converted_value
 
 # Retrieve stock information with additional data
-def stock_info(stock_symbol):
+def stock_info(conversion_rate, stock_symbol):
     stock_symbol = stock_symbol.upper()
     data = yf.Ticker(stock_symbol)
     price_data = data.history(period="1d", interval="1m")["Close"].iloc[-1]
+    price_in_eth = price_data / conversion_rate
     logging.info(f"Current price for {stock_symbol}: ${price_data:.2f}")
-    return price_data
+    return price_data, price_in_eth
 
 # Transfer Ethereum with enhanced error handling
 def transfer_eth(w3, from_account, to_account, amount):
@@ -117,7 +117,16 @@ def transfer_eth(w3, from_account, to_account, amount):
         raise
 
 # Additional utility function to get account balance
-def get_crypto_balance(w3, account_address):
+def get_account_balance(w3, account_address):
     balance = w3.eth.get_balance(account_address) / 1e18
     logging.info(f"Balance for account {account_address}: {balance:.2f} ETH")
     return balance
+
+def currency_converter(currency, price):
+  if currency == 'USD':
+    return price
+  currency_pair = f'USD{currency}=X'
+
+  currency_data = yf.Ticker(currency_pair)
+  exchange_rate = currency_data.history(period = '1d', interval = '1m')["Close"].iloc[-1]
+  return price * exchange_rate
