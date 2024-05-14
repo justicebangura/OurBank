@@ -84,16 +84,14 @@ def show():
         # Displaying images of Sahib Gandhi
         img_hyunbin = Image.open("./Images/Sahib.JPG")
         small_img_hyunbin = img_hyunbin.resize((150, 150))  # Smaller image for the team
-        st.image(small_img_hyunbin, caption="Hyun Bin Shin", use_column_width=False)
+        st.image(small_img_hyunbin, caption="Sahib Gandhi", use_column_width=False)
 
-        # Information about Hyun Bin Shin
+        # Information about Sahib Gandhi
         st.write(
             """
             **Sahib Gandhi** Is in charge of the back end logic of the applications and ensuring everything is 
             running smoothly. His primary responsibility is to design and implement Streamlit functions 
-            that visualize data, enable user interaction, and deliver insights efficiently. Sahib leveraged
-            Streamlit's intuitive APls to develop engaging and user-friendly applications for data analysis, 
-            machine learning, visualization, and more.
+            that visualize data, enable user interaction, and deliver insights efficiently.
             """
         )
 
