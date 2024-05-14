@@ -95,20 +95,24 @@ def account_operations():
   
 # Streamlit main function to handle menu and operations
 def show():
-    
     st.sidebar.title("Bank App")
     options = ["Open Account", "Account Operations"]
+
+    # Check if 'logged_in_user' key exists in session state
+    if 'logged_in_user' not in st.session_state:
+        # Initialize 'logged_in_user' key
+        st.session_state['logged_in_user'] = False  # Assuming initially user is not logged in
 
     # Login and logout logic
     if st.session_state['logged_in_user']:
         logout = st.sidebar.button('Log out')
         if logout:
             st.write('Logged out successfully')
-            st.session_state['logged_in_user'] = None
+            st.session_state['logged_in_user'] = False  # Update 'logged_in_user' status to False on logout
     else:
         login()
 
-    choice = st.sidebar.selectbox("Menu", options, key = 'selected_option')
+    choice = st.sidebar.selectbox("Menu", options, key='selected_option')
 
     # Account features dropdown
     if choice == "Open Account":
