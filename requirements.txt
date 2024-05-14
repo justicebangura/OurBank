@@ -6,3 +6,4 @@ pymongo
 streamlit
 web3
 yfinance
+python-dotenv
