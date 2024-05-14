@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
 
+
 # Function to display the home page
 def show():
     # Title and Introduction
@@ -45,3 +46,4 @@ def show():
     )
     if st.button("Open an Account"):
         st.write("Thank you for your interest! Please visit our sign-up page to get started.")  # Call-to-action feedback
+

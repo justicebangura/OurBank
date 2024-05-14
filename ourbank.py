@@ -26,10 +26,14 @@ def display_logo_in_sidebar(img_path):
 # Display the logo in the sidebar
 display_logo_in_sidebar("Images/transparent1.png")  # Path to the logo image
 
+
+
 # Navigation and content for authenticated users
 st.sidebar.title("Navigation")
-navigation = st.sidebar.radio("Select a Page", ("Home", "Account", "Features","About"))
-    
+nav_options = ["Home", "Account", "Features","About"]
+
+navigation = st.sidebar.radio("Select a Page", nav_options, key = 'navigation_options')
+
 if navigation == "Home":
     import frontend.pages.home as home
     home.show()

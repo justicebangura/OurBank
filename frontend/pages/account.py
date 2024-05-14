@@ -60,7 +60,7 @@ def account_operations():
     # Transaction history
     st.subheader("Transaction History")
     for transaction in account_details['transactions']:
-        st.write(f"{transaction['type'].capitalize()} of {transaction['amount']:.2f} at {transaction['timestamp']}")
+        st.write(f"{transaction['type'].capitalize()} of {transaction['amount']:.2f} {transaction['currency']} at {transaction['timestamp']}")
 
     # Deposit into account
     st.subheader("Deposit")
@@ -93,10 +93,10 @@ def account_operations():
 # Streamlit main function to handle menu and operations
 def show():
     
-    
     st.sidebar.title("Bank App")
     options = ["Open Account", "Account Operations"]
 
+    # Login and logout logic
     if st.session_state['logged_in_user']:
         logout = st.sidebar.button('Log out')
         if logout:
@@ -107,6 +107,7 @@ def show():
 
     choice = st.sidebar.selectbox("Menu", options, key = 'selected_option')
 
+    # Account features dropdown
     if choice == "Open Account":
         open_new_account()
     elif choice == "Account Operations":
