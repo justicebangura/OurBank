@@ -49,19 +49,6 @@ def account_operations():
     username = st.session_state['logged_in_user']
     st.title(f"Welcome, {username}")
     
-    # Get account details
-    account_details = check_account_balance(username)
-    account_balance_details = [f'{i[1]:.2f} {i[0]}' for i in account_details['balance'].items()]
-    st.write(f"Current balance: ")
-    for i in account_balance_details:
-        st.write(i)
-    
-
-    # Transaction history
-    st.subheader("Transaction History")
-    for transaction in account_details['transactions']:
-        st.write(f"{transaction['type'].capitalize()} of {transaction['amount']:.2f} {transaction['currency']} at {transaction['timestamp']}")
-
     # Deposit into account
     st.subheader("Deposit")
     amount = st.number_input("Enter amount to deposit", min_value=0.0)
@@ -86,10 +73,26 @@ def account_operations():
     if st.button("Transfer"):
         try:
             sender_balance, receiver_balance = transfer_funds(username, receiver, amount)
-            st.write(f"Transfer successful! Sender's new balance: {sender_balance:.2f}")
+            st.write(f"Transfer successful! Sender's new balance: {sender_balance['USD']:.2f}")  # This line
         except ValueError as e:
             st.error(str(e))
 
+    # Get account details
+    account_details = check_account_balance(username)
+    account_balance_details = [f'{i[1]:.2f} {i[0]}' for i in account_details['balance'].items()]
+    st.write(f"Current balance: ")
+    for i in account_balance_details:
+        st.write(i)
+    
+    # Transaction history
+    st.title("-----------------------------")
+    st.subheader(" Admin Dashboard ")
+    for transaction in account_details['transactions']:
+        if 'currency' in transaction: 
+            st.write(f"{transaction['type'].capitalize()} of {transaction['amount']:.2f} {transaction['currency']} at {transaction['timestamp']}")
+        else:
+            st.write(f"{transaction['type'].capitalize()} of {transaction['amount']:.2f} at {transaction['timestamp']}")  # Handle the case where 'currency' is missing
+  
 # Streamlit main function to handle menu and operations
 def show():
     
@@ -158,11 +161,6 @@ def crypto_wallet():
     bank_account = w3_ganache.eth.accounts[9]  # Sample bank account
     conversion_rate = eth_exchange_info(sepolia_contract)  # Get Ethereum conversion rate
 
-    # Display account information
-    st.title("Account Information")
-    st.write(f"My Ethereum address: {my_account}")
-    st.write(f"Account balance: {get_account_balance(w3_ganache, my_account):.2f} ETH")
-
     # Converting Ethereum to different currencies
     st.header("Convert Ethereum")
     eth_amount = st.number_input("Enter ETH amount to convert", min_value=0.01)
@@ -203,6 +201,12 @@ def crypto_wallet():
         stock_price, price_in_eth = stock_info(conversion_rate, stock_symbol)
         remaining_balance = withdraw_funds(username, stock_price*num_of_stocks)
         st.write(f"Purchase complete. Remaining balance is $ {remaining_balance['USD']} USD")
+
+    
+    # Display account information
+    st.title("Account Information")
+    st.write(f"My Ethereum address: {my_account}")
+    st.write(f"Account balance: {get_account_balance(w3_ganache, my_account):.2f} ETH")
 
 
     st.write(

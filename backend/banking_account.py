@@ -90,4 +90,3 @@ def transfer_funds(sender, receiver, amount):
         return users.find_one({"username": sender})["balance"], users.find_one({"username": receiver})["balance"]
     raise ValueError("One or both users not found")
 
-#add store transaction history  
