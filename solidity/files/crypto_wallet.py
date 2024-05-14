@@ -55,9 +55,8 @@ def eth_exchange_info(contract):
 
 # Convert Ethereum to other currencies
 def convert_eth_to_other_currency(eth_amount, conversion_rate, currency):
-    c = CurrencyRates()
     usd_value = conversion_rate * eth_amount
-    converted_value = c.convert("USD", currency, usd_value)
+    converted_value = currency_converter(currency, usd_value)
     logging.info(f"Converted {eth_amount} ETH to {converted_value:.2f} {currency}")
     return converted_value
 
@@ -94,7 +93,14 @@ def get_account_balance(w3, account_address):
     logging.info(f"Balance for account {account_address}: {balance:.2f} ETH")
     return balance
 
+def currency_converter(currency, price):
+  if currency == 'USD':
+    return price
+  currency_pair = f'USD{currency}=X'
 
+  currency_data = yf.Ticker(currency_pair)
+  exchange_rate = currency_data.history(period = '1d', interval = '1m')["Close"].iloc[-1]
+  return price * exchange_rate
 
 
 

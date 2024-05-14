@@ -135,7 +135,7 @@ from solidity.files.crypto_wallet import (
     convert_eth_to_other_currency,
     stock_info,
     transfer_eth,
-    get_account_balance,
+    get_account_balance
 )
 
 # Streamlit function to display the Account page
